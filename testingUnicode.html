@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-16"/>
+	</head>
+	<body>
+		<textarea id="huruf"></textarea>
+		<p id="beda"></p>
+		<script>
+		const different = [];
+		const huruf = document.getElementById("huruf");
+		for (let i = 0; i <= 1114111; i++) {
+			if (i != 1114111) {
+				huruf.value = [String.fromCodePoint(i) + String.fromCodePoint(i+1)].join("");
+			}
+			else {
+				huruf.value = String.fromCodePoint(i);
+			}
+			const number = parseInt([...huruf.value][0].codePointAt(0));
+			if (i != number) {
+				different[i] = String(i) + " != " + number + "<br>";
+			}
+		}
+		document.getElementById("beda").innerHTML = different.join("");
+		
+		
+		//huruf.value = [String.fromCodePoint(56319), String.fromCodePoint(56320)].join("");
+		</script>
+	</body>
+</html>

@@ -1,0 +1,4 @@
+caesar:132
+vigenere:Ini Kunci Enkripsi
+
+untuk mendekripsi, gunakan kunci negatif (-)
