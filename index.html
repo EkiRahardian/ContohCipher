@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang=id>
 	<head>
-		<meta charset="utf-16">
+		<title>Unicode cipher</title>
+		<meta http-equiv=Content-Type content="text/html; charset=utf-8">
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	</head>
 	<body>
 		<div style="background-color: lightgreen;">
 			<p>Original Text:</p>
-			<textarea id="teksAsal" rows="30" cols="100" spellcheck="false" wrap="on" autocorrect="off" autocapitalize="off"></textarea><br>
+			<textarea id="teksAsal" rows="30" cols="100" spellcheck="false" autocapitalize="off"></textarea><br>
 			<input onchange="loadText(this)" id="loadText" type="file">
 				<label for="loadText"> File to Base64</label><br>
 			<input onchange="loadTextCode(this)" id="loadTextCode" type="file" accept=".ciphereki">
@@ -21,19 +22,19 @@
 		</div>
 		<div style="background-color: lightpink;">
 			<p>Vigenere Key:</p>
-			<textarea id="vigenereKeyInput" size="98" rows="10" cols="100"></textarea><br>
+			<textarea id="vigenereKeyInput" rows="10" cols="100"></textarea><br>
 			<input onclick="plusMinusVigenereFunction()" type="button" value="+" id="plusMinusVigenere"/>
 			<p id="vigenereKeyDebug">Vigenere key = </p>
 		</div>
 		<div style="background-color: mediumpurple;">
 			<input onclick="cipherText()" type="button" value="Ubah" id="cipherText"/>
 			<p>Cipher Text:</p>
-			<textarea id="teksHasil" rows="30" cols="100" spellcheck="false" wrap="on" autocorrect="off" autocapitalize="off" readonly></textarea>
+			<textarea id="teksHasil" rows="30" cols="100" spellcheck="false" autocapitalize="off" readonly></textarea>
 			<input onclick="moveUp()" type="button" value="↑" id="moveUp"/><br>
 			<input type="text" id="saveTextFileName"><input onclick="saveText()" type="button" value="Save File" id="saveText"/>
 				<label for="saveText"> Base64 to File</label><br>
 			<input type="text" id="saveTextFileCodeName"><input onclick="saveTextCode()" type="button" value="Save File" id="saveTextCode"/>
-				<label for="saveText"> String to Ciphereki</label>
+				<label for="saveTextFileCodeName"> String to Ciphereki</label>
 		</div><br>
 		<p id="proses"></p>
 		<script>
@@ -51,7 +52,7 @@
 				reader.onload = function (event) {
 					$("#teksAsal").val(event.target.result);
 					$("#loadText").val("");
-				}
+				};
 			}
 			function loadTextCode(input) { //Buka file dengan format .ciphereki
 				const reader = new FileReader();
@@ -183,7 +184,7 @@
 				document.body.appendChild(a);
 				a.click();
 				a.remove();
-				setTimeout(() => URL.revokeObjectURL(a.href), 1000)
+				setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 			}
 			function saveText() { //Base64 to File
 				const teksHasil = $("#teksHasil").val();
