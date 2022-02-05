@@ -59,7 +59,7 @@
 				reader.readAsText(input.files[0]);
 				reader.onload = function(event) {
 					const text = event.target.result;
-					const encode = text.split("U+");
+					const encode = text.split("u");
 					encode.shift();
 					let encodeText = [];
 					for (let i = 0; i < encode.length; i++) {
@@ -211,7 +211,7 @@
 				const arrayKarakter = [...teksHasil];
 				const codepoints = [];
 				for (let i = 0; i < arrayKarakter.length; i++) {
-					codepoints[i] = "U+" + arrayKarakter[i].codePointAt(0).toString(16);
+					codepoints[i] = "u" + arrayKarakter[i].codePointAt(0).toString(16);
 				}
 				const file = new Blob([codepoints.join("")], {type: "octet/stream"});
 				const saveTextFileCodeName = $("#saveTextFileCodeName").val();
