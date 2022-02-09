@@ -16,7 +16,7 @@
 		</div>
 		<div style="background-color: lightblue;">
 			<p>Caesar Key:</p>
-			<input oninput="return numberOnly(this)" type="text" id="caesarKeyInput" size="98"><br>
+			<input oninput="return $(this).val(this.value.replace(/[^0-9]/g, ''))" type="text" id="caesarKeyInput" size="98"><br>
 			<input onclick="plusMinusCaesarFunction()" type="button" value="+" id="plusMinusCaesar"/>
 			<p id="caesarKeyDebug">Caesar key = </p>
 		</div>
@@ -30,7 +30,7 @@
 			<input onclick="cipherText()" type="button" value="Ubah" id="cipherText"/>
 			<p>Cipher Text:</p>
 			<textarea id="teksHasil" rows="30" cols="100" spellcheck="false" autocapitalize="off" readonly></textarea>
-			<input onclick="moveUp()" type="button" value="↑" id="moveUp"/><br>
+			<input onclick="$('#teksAsal').val(''); $('#teksAsal').val($('#teksHasil').val())" type="button" value="↑" id="moveUp"/><br>
 			<input type="text" id="saveTextFileName"><input onclick="saveText()" type="button" value="Save File" id="saveText"/>
 				<label for="saveText"> Base64 to File</label><br>
 			<input type="text" id="saveTextFileCodeName"><input onclick="saveTextCode()" type="button" value="Save File" id="saveTextCode"/>
@@ -43,9 +43,6 @@
 			let vigenereKey = [0];
 			let plusMinusCaesar = 1; //Buat variabel penentu apakah caesar cipher digeser ke depan atau belakang (Kalau 1 geser ke depan, kalau -1 geser ke belakang)
 			let plusMinusVigenere = 1; //Buat variabel penentu apakah vigenere cipher digeser ke depan atau belakang
-			function numberOnly(input) { //Fungsi untuk mencegah kolom key untuk diisi selain angka
-				input.value = input.value.replace(/[^0-9]/g, "");
-			}
 			function loadText(input) { //Buka file dan ubah menjadi format Base64
 				const reader = new FileReader();
 				reader.readAsDataURL(input.files[0]); //Base64
@@ -125,56 +122,54 @@
 				setVigenereKeyDebug();
 			}
 			function cipherText() {
-				$("#teksHasil").val(); //Kosongkan textarea hasil cipher
-				const teksAsal = $("#teksAsal").val(); //Ambil textarea asal
-				caesarKey = getCaesarKey(); //Ambil kunci caesar
-				vigenereKey = getVigenereKey(); //Ambil kunci vigenere
-				let vigenereIndex = 0; //Buat variabel untuk menentukan posisi kunci vigenere yang akan digunakan
-				const arrayCipher = []; //Buat array kosong yang nanti akan diisi teks hasil cipher
-				const arrayKarakter = [...teksAsal]; //Ubah teks ke array berisi tiap-tiap huruf
-				const decrypting = parseInt(arrayKarakter[1].codePointAt(0)) === 0; //Memeriksa apakah karakter kedua adalah karakter dengan kode poin 0, jika iya maka teks akan didekripsi
-				const codepoints = []; //Buat array kosong yang nanti akan diisi kode poin
-				//const proses = []; //Buat variabel untuk menunjukkan step-step penjumlahan cipher yang dilakukan
-				for (let i = 0; i < arrayKarakter.length; i++) { //Jalankan sebanyak jumlah huruf pada arrayKarakter
-					if (decrypting === true && parseInt(arrayKarakter[i].codePointAt(0)) === 0) { //Jika teks didekripsi, maka karakter dengan kode poin 0 akan dihapuskan
-						arrayCipher[i] = "";
-					}
-					else {
-						if (parseInt(arrayKarakter[i].codePointAt(0)) === 1) { //Jika karakter memiliki kode poin 1
-							codepoints[i] = 13 + parseInt(caesarKey) + parseInt(vigenereKey[vigenereIndex]); //Ubah kode poin 1 menjadi 13, lalu jumlahkan dengan kunci caesar dan kunci vigenere
-							//proses[i] = "13" + " + " + String(caesarKey) + " + " + String(vigenereKey[vigenereIndex]); //Menunjukkan step-step penjumlahan cipher yang dilakukan
+				if ($("#teksAsal").val().length > 0) { //Jika teks asal tidak kosong, jalankan fungsi:
+					$("#teksHasil").val(""); //Kosongkan textarea hasil cipher
+					const teksAsal = $("#teksAsal").val(); //Ambil textarea asal
+					caesarKey = getCaesarKey(); //Ambil kunci caesar
+					vigenereKey = getVigenereKey(); //Ambil kunci vigenere
+					let vigenereIndex = 0; //Buat variabel untuk menentukan posisi kunci vigenere yang akan digunakan
+					const arrayCipher = []; //Buat array kosong yang nanti akan diisi teks hasil cipher
+					const arrayKarakter = [...teksAsal]; //Ubah teks ke array berisi tiap-tiap huruf
+					const decrypting = Boolean(parseInt(arrayKarakter[1].codePointAt(0)) === 0); //Memeriksa apakah karakter kedua adalah karakter dengan kode poin 0, jika iya maka teks akan didekripsi
+					const codepoints = []; //Buat array kosong yang nanti akan diisi kode poin
+					//const proses = []; //Buat variabel untuk menunjukkan step-step penjumlahan cipher yang dilakukan
+					for (let i = 0; i < arrayKarakter.length; i++) { //Jalankan sebanyak jumlah huruf pada arrayKarakter
+						if (decrypting === true && parseInt(arrayKarakter[i].codePointAt(0)) === 0) { //Jika teks didekripsi, maka karakter dengan kode poin 0 akan dihapuskan
+							arrayCipher[i] = "";
 						}
 						else {
-							codepoints[i] = parseInt(arrayKarakter[i].codePointAt(0)) + parseInt(caesarKey) + parseInt(vigenereKey[vigenereIndex]); //Jumlahkan kode poin per huruf dengan kunci caesar dan kunci vigenere
-							//proses[i] = arrayKarakter[i].codePointAt(0) + " + " + String(caesarKey) + " + " + String(vigenereKey[vigenereIndex]); //Menunjukkan step-step penjumlahan cipher yang dilakukan
-						}
-						while (codepoints[i] < 2) { //Mencegah kode poin lebih kecil daripada 2
-							codepoints[i] += 1114110; //1 + x = 1114111 (x = 1114110)
-						}
-						while (codepoints[i] > 1114111) { //Mencegah kode poin lebih besar daripada 1114111 (1114111 adalah kode terakhir)
-							codepoints[i] -= 1114110; //1114112 - 1 = 2 (x = 1114110)
-						}
-						
-						if (codepoints[i] === 13) { //Jika kode poin bernilai 13, yaitu carriage return yang akan berubah menjadi karakter dengan kode poin 10 di textarea,
-							codepoints[i] = 1; //Maka ubah kode poin menjadi bernilai 1
-						}
-						if (decrypting === true) { //Jika sedang mendekripsi
+							if (parseInt(arrayKarakter[i].codePointAt(0)) === 1) { //Jika karakter memiliki kode poin 1
+								codepoints[i] = 13 + parseInt(caesarKey) + parseInt(vigenereKey[vigenereIndex]); //Ubah kode poin 1 menjadi 13, lalu jumlahkan dengan kunci caesar dan kunci vigenere
+								//proses[i] = "13" + " + " + String(caesarKey) + " + " + String(vigenereKey[vigenereIndex]); //Menunjukkan step-step penjumlahan cipher yang dilakukan
+							}
+							else {
+								codepoints[i] = parseInt(arrayKarakter[i].codePointAt(0)) + parseInt(caesarKey) + parseInt(vigenereKey[vigenereIndex]); //Jumlahkan kode poin per huruf dengan kunci caesar dan kunci vigenere
+								//proses[i] = arrayKarakter[i].codePointAt(0) + " + " + String(caesarKey) + " + " + String(vigenereKey[vigenereIndex]); //Menunjukkan step-step penjumlahan cipher yang dilakukan
+							}
+							while (codepoints[i] < 2) { //Mencegah kode poin lebih kecil daripada 2
+								codepoints[i] += 1114110; //1 + x = 1114111 (x = 1114110)
+							}
+							while (codepoints[i] > 1114111) { //Mencegah kode poin lebih besar daripada 1114111 (1114111 adalah kode terakhir)
+								codepoints[i] -= 1114110; //1114112 - x = 2 (x = 1114110)
+							}
+							if (codepoints[i] === 13) { //Jika kode poin bernilai 13, yaitu carriage return yang akan berubah menjadi karakter dengan kode poin 10 di textarea,
+								codepoints[i] = 1; //Maka ubah kode poin menjadi bernilai 1
+							}
 							arrayCipher[i] = String.fromCodePoint(codepoints[i]); //ubah kode poin ke karakter
-						}
-						else { //Jika sedang mengenkripsi
-							arrayCipher[i] = String.fromCodePoint(codepoints[i]) + String.fromCodePoint(0); //Ubah kode poin ke karakter dan selipkan karakter dengan kode poin 0 untuk mencegah dua karakter surrogate menggabungkan diri dan membentuk karakter baru
-						}
-						vigenereIndex += 1; //Ganti ke kunci vigenere selanjutnya
-						if (vigenereIndex === vigenereKey.length) { //Jika kunci vigenere terakhir sudah dipakai, balik ke kunci vigenere awal
-							vigenereIndex = 0;
+							if (decrypting === false) { //Jika sedang mengenkripsi
+								arrayCipher[i] += String.fromCodePoint(0); //Selipkan karakter dengan kode poin 0 untuk mencegah dua karakter surrogate pair menggabungkan diri dan membentuk karakter baru
+							}
+							vigenereIndex += 1; //Ganti ke kunci vigenere selanjutnya
+							if (vigenereIndex === vigenereKey.length) { //Jika kunci vigenere terakhir sudah dipakai, balik ke kunci vigenere awal
+								vigenereIndex = 0;
+							}
 						}
 					}
-
+					$("#teksHasil").val(arrayCipher.join("")); //Karakter hasil cipher digabungkan menjadi satu teks hasil cipher
+					setCaesarKeyDebug();
+					setVigenereKeyDebug();
+					//$("#proses").html(proses.join("<br>")); //Menunjukkan step-step penjumlahan yang dilakukan
 				}
-				$("#teksHasil").val(arrayCipher.join("")); //Karakter hasil cipher digabungkan menjadi satu teks hasil cipher
-				setCaesarKeyDebug();
-				setVigenereKeyDebug();
-				//$("#proses").html(proses.join("<br>")); //Menunjukkan step-step penjumlahan yang dilakukan
 			}
 			function downloadFile(fileName, file) { //Fungsi unduh file
 				const a = document.createElement("a");
@@ -221,9 +216,6 @@
 				else {
 					downloadFile("fileName.ciphereki", file);
 				}
-			}
-			function moveUp() { //Teks dari <tetxarea> cipher text dipindahkan ke <textarea> original text
-				$("#teksAsal").val($("#teksHasil").val());
 			}
 		</script>
 	</body>
