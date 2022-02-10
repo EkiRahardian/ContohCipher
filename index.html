@@ -44,6 +44,7 @@
 			let plusMinusCaesar = 1; //Buat variabel penentu apakah caesar cipher digeser ke depan atau belakang (Kalau 1 geser ke depan, kalau -1 geser ke belakang)
 			let plusMinusVigenere = 1; //Buat variabel penentu apakah vigenere cipher digeser ke depan atau belakang
 			function loadText(input) { //Buka file dan ubah menjadi format Base64
+				$("#teksAsal").val("");
 				const reader = new FileReader();
 				reader.readAsDataURL(input.files[0]); //Base64
 				reader.onload = function (event) {
@@ -52,6 +53,7 @@
 				};
 			}
 			function loadTextCode(input) { //Buka file dengan format .ciphereki
+				$("#teksAsal").val("");
 				const reader = new FileReader();
 				reader.readAsText(input.files[0]);
 				reader.onload = function(event) {
@@ -130,7 +132,13 @@
 					let vigenereIndex = 0; //Buat variabel untuk menentukan posisi kunci vigenere yang akan digunakan
 					const arrayCipher = []; //Buat array kosong yang nanti akan diisi teks hasil cipher
 					const arrayKarakter = [...teksAsal]; //Ubah teks ke array berisi tiap-tiap huruf
-					const decrypting = Boolean(parseInt(arrayKarakter[1].codePointAt(0)) === 0); //Memeriksa apakah karakter kedua adalah karakter dengan kode poin 0, jika iya maka teks akan didekripsi
+					let decrypting;
+					if (arrayKarakter.length > 1) { //Memeriksa apakah karakter kedua adalah karakter dengan kode poin 0 jika teks terdapat lebih dari 1 karakter, jika iya maka teks akan didekripsi
+						decrypting = Boolean(parseInt(arrayKarakter[1].codePointAt(0)) === 0);
+					}
+					else {
+						decrypting = false;
+					}
 					const codepoints = []; //Buat array kosong yang nanti akan diisi kode poin
 					//const proses = []; //Buat variabel untuk menunjukkan step-step penjumlahan cipher yang dilakukan
 					for (let i = 0; i < arrayKarakter.length; i++) { //Jalankan sebanyak jumlah huruf pada arrayKarakter
@@ -182,23 +190,28 @@
 				setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 			}
 			function saveText() { //Base64 to File
-				const teksHasil = $("#teksHasil").val();
-				const arr = teksHasil.split(',');
-				const bstr = atob(arr[1]);
-				let n = bstr.length;
-				const u8arr = new Uint8Array(n);
-				while (n--) {
-					u8arr[n] = bstr.codePointAt(n);
+				try {
+					const teksHasil = $("#teksHasil").val();
+					const arr = teksHasil.split(',');
+					const bstr = atob(arr[1]);
+					let n = bstr.length;
+					const u8arr = new Uint8Array(n);
+					while (n--) {
+						u8arr[n] = bstr.codePointAt(n);
+					}
+					const file = new File([u8arr], "fileName.bin", {
+						type: arr[0].match(/:(.*?);/)[1]
+					});
+					const saveTextFileName = $("#saveTextFileName").val();
+					if (saveTextFileName.length !== 0) {
+						downloadFile(saveTextFileName, file);
+					}
+					else {
+						downloadFile("fileName.bin", file);
+					}
 				}
-				const file = new File([u8arr], "test.bin", {
-					type: arr[0].match(/:(.*?);/)[1]
-				});
-				const saveTextFileName = $("#saveTextFileName").val();
-				if (saveTextFileName.length !== 0) {
-					downloadFile(saveTextFileName, file);
-				}
-				else {
-					downloadFile("fileName.bin", file);
+				catch (err) {
+					alert("Only accept base64 format!");
 				}
 			}
 			function saveTextCode() {
