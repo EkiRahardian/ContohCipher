@@ -2,42 +2,95 @@
 <html lang=id>
 	<head>
 		<title>Unicode cipher</title>
-		<meta http-equiv=Content-Type content="text/html; charset=utf-8">
-		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<meta
+			http-equiv=Content-Type
+			content="text/html; charset=utf-8">
+		<script
+			src="https://code.jquery.com/jquery-3.6.0.min.js">
+		</script>
 	</head>
 	<body>
 		<div style="background-color: lightgreen;">
 			<p>Original Text:</p>
-			<textarea id="teksAsal" rows="30" cols="100" spellcheck="false" autocapitalize="off"></textarea><br>
-			<input id="loadText" onchange="loadText(this)" type="file">
-				<label for="loadText"> File to Base64</label><br>
-			<input id="loadTextCode" onchange="loadTextCode(this)" type="file" accept=".ciphereki">
-				<label for="loadTextCode"> Ciphereki to String</label>
+			<textarea id="teksAsal"
+				rows="30"
+				cols="100"
+				spellcheck="false" 
+				autocapitalize="off">
+			</textarea>
+			<br>
+			<input id="loadText"
+				onchange="loadText(this);"
+				type="file">
+				<label for="loadText">File to Base64</label>
+				<br>
+			<input id="loadTextCode"
+				onchange="loadTextCode(this);"
+				type="file"
+				accept=".ciphereki">
+				<label for="loadTextCode">Ciphereki to String</label>
 		</div>
 		<div style="background-color: lightblue;">
 			<p>Caesar Key:</p>
-			<input id="caesarKeyInput" oninput="const removeNumber = $(this).val(this.value.replace(/[^0-9]/g, '')); caesarKey = getCaesarKey(); setCaesarKeyDebug(); return removeNumber;" type="text" size="98"><br>
-			<input id="plusMinusCaesar" onclick="plusMinusCaesarFunction()" type="button" value="+"/>
+			<input id="caesarKeyInput"
+				oninput="const removeNumber = $(this).val(this.value.replace(/[^0-9]/g, '')); caesarKey = getCaesarKey(); setCaesarKeyDebug(); return removeNumber;"
+				type="text"
+				size="98">
+				<br>
+			<input id="plusMinusCaesar"
+				onclick="plusMinusCaesarFunction();"
+				type="button"
+				value="+"/>
 			<p id="caesarKeyDebug">Caesar key = 0</p>
 		</div>
 		<div style="background-color: lightpink;">
 			<p>Vigenere Key:</p>
-			<textarea id="vigenereKeyInput" oninput="vigenereKey = getVigenereKey(); setVigenereKeyDebug();" rows="10" cols="100"></textarea><br>
-			<input id="plusMinusVigenere" onclick="plusMinusVigenereFunction()" type="button" value="+"/>
+			<textarea id="vigenereKeyInput"
+				oninput="vigenereKey = getVigenereKey(); setVigenereKeyDebug();"
+				rows="10"
+				cols="100">
+			</textarea>
+			<br>
+			<input id="plusMinusVigenere"
+				onclick="plusMinusVigenereFunction();"
+				type="button"
+				value="+"/>
 			<p id="vigenereKeyDebug">Vigenere key = 0</p>
 		</div>
 		<div style="background-color: mediumpurple;">
-			<input id="cipherText" onclick="cipherText()" type="button" value="Ubah"/>
+			<input id="cipherText"
+				onclick="cipherText();"
+				type="button"
+				value="Ubah"/>
 			<p>Cipher Text:</p>
-			<textarea id="teksHasil" rows="30" cols="100" spellcheck="false" autocapitalize="off" readonly></textarea>
-			<input id="moveUp" onclick="$('#teksAsal').val(''); $('#teksAsal').val($('#teksHasil').val())" type="button" value="↑"/><br>
-			<input id="saveTextFileName" type="text">
-			<input id="saveText" onclick="saveText()" type="button" value="Save File"/>
-				<label for="saveText"> Base64 to File</label><br>
-			<input id="saveTextFileCodeName" type="text">
-			<input id="saveTextCode" onclick="saveTextCode()" type="button" value="Save File"/>
+			<textarea id="teksHasil"
+				rows="30"
+				cols="100"
+				spellcheck="false"
+				autocapitalize="off"
+				readonly>
+			</textarea>
+			<input id="moveUp"
+				onclick="$('#teksAsal').val(''); $('#teksAsal').val($('#teksHasil').val());"
+				type="button"
+				value="↑"/>
+				<br>
+			<input id="saveTextFileName"
+				type="text">
+			<input id="saveText"
+				onclick="saveText();"
+				type="button"
+				value="Save File"/>
+				<label for="saveText"> Base64 to File</label>
+				<br>
+			<input id="saveTextFileCodeName"
+				type="text">
+			<input id="saveTextCode"
+				onclick="saveTextCode();"
+				type="button" 
+				value="Save File"/>
 				<label for="saveTextFileCodeName"> String to Ciphereki</label>
-		</div><br>
+		</div>
 		<p id="proses"></p>
 		<script>
 			"use strict";
