@@ -10,20 +10,19 @@
 		<script>
 		const different = [];
 		const huruf = document.getElementById("huruf");
-		for (let i = 0; i <= 1114111; i++) {
-			if (i != 1114111) {
-				huruf.value = [String.fromCodePoint(i) + String.fromCodePoint(i+1)].join("");
+		for (let codepoint = 0; codepoint <= 1114111; codepoint++) {
+			if (codepoint != 1114111) {
+				huruf.value = [String.fromCodePoint(codepoint) + String.fromCodePoint(codepoint+1)].join("");
 			}
 			else {
-				huruf.value = String.fromCodePoint(i);
+				huruf.value = String.fromCodePoint(codepoint);
 			}
 			const number = parseInt(huruf.value.codePointAt(0));
-			if (i != number) {
-				different[i] = String(i) + " != " + number + "<br>";
+			if (codepoint != number) {
+				different.push(String(codepoint) + " != " + number + "<br>");
 			}
 		}
 		document.getElementById("beda").innerHTML = different.join("");
-		
 		
 		//document.getElementById("huruf").value = [String.fromCodePoint(56319), String.fromCodePoint(56320)].join("");
 		</script>
