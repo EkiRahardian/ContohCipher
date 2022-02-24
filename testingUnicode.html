@@ -8,23 +8,22 @@
 		<textarea id="huruf"></textarea>
 		<p id="beda"></p>
 		<script>
-		const different = [];
-		const huruf = document.getElementById("huruf");
-		for (let codepoint = 0; codepoint <= 1114111; codepoint++) {
-			if (codepoint != 1114111) {
-				huruf.value = [String.fromCodePoint(codepoint) + String.fromCodePoint(codepoint+1)].join("");
+			const different = [];
+			const huruf = document.getElementById("huruf");
+			for (let codepoint = 0; codepoint <= 1114111; codepoint++) {
+				if (codepoint === 1114111) {
+					huruf.value = String.fromCodePoint(codepoint);
+				}
+				else {
+					huruf.value = [String.fromCodePoint(codepoint) + String.fromCodePoint(codepoint+1)].join("");
+				}
+				const number = parseInt(huruf.value.codePointAt(0));
+				if (codepoint !== number) {
+					different.push(String(codepoint) + " != " + number + "<br>");
+				}
 			}
-			else {
-				huruf.value = String.fromCodePoint(codepoint);
-			}
-			const number = parseInt(huruf.value.codePointAt(0));
-			if (codepoint != number) {
-				different.push(String(codepoint) + " != " + number + "<br>");
-			}
-		}
-		document.getElementById("beda").innerHTML = different.join("");
-		
-		//document.getElementById("huruf").value = [String.fromCodePoint(56319), String.fromCodePoint(56320)].join("");
+			document.getElementById("beda").innerHTML = different.join("");
+			//document.getElementById("huruf").value = [String.fromCodePoint(56319), String.fromCodePoint(56320)].join("");
 		</script>
 	</body>
 </html>

@@ -1,4 +1,4 @@
 caesar:132
-vigenere:Ini Kunci Enkripsi
+vigenere:己所不欲,勿施于人。
 
 untuk mendekripsi, gunakan kunci negatif (-)

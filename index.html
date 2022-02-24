@@ -193,16 +193,18 @@
 								codepoints[i] = 1; //Maka ubah kode poin menjadi bernilai 1
 							}
 							arrayCipher[i] = String.fromCodePoint(codepoints[i]); //ubah kode poin ke karakter
-							if (decrypting === false) { //Jika sedang mengenkripsi
-								arrayCipher[i] += String.fromCodePoint(0); //Selipkan karakter dengan kode poin 0 untuk mencegah dua karakter surrogate pair menggabungkan diri dan membentuk karakter baru
-							}
 							vigenereIndex += 1; //Ganti ke kunci vigenere selanjutnya
 							if (vigenereIndex === vigenereKey.length) { //Jika kunci vigenere terakhir sudah dipakai, balik ke kunci vigenere awal
 								vigenereIndex = 0;
 							}
 						}
 					}
-					$("#teksHasil").val(arrayCipher.join("")); //Karakter hasil cipher digabungkan menjadi satu teks hasil cipher
+					if (decrypting === false) { //Jika sedang mengenkripsi
+						$("#teksHasil").val(arrayCipher.join(String.fromCodePoint(0))); //Selipkan karakter dengan kode poin 0 untuk mencegah dua karakter surrogate pair menggabungkan diri dan membentuk karakter baru
+					}
+					else {
+						$("#teksHasil").val(arrayCipher.join("")); //Karakter hasil cipher digabungkan menjadi satu teks hasil cipher
+					}
 				}
 			}
 			function downloadFile(fileName, file) { //Fungsi unduh file
@@ -215,42 +217,38 @@
 				a.remove();
 			}
 			function saveText() { //Data URL Base64 to File
-				try { //Jika teksHasil berisi Data URL Base64 valid, jalankan:
+				try { //Jika teksHasil berisi data URL Base64 valid, jalankan:
 					const teksHasil = $("#teksHasil").val(); //Ambil isi dari teksHasil
-					const saveTextFileName = $("#saveTextFileName").val(); //Ambil isi dari saveTextFileName
+					let saveTextFileName = $("#saveTextFileName").val(); //Ambil isi dari saveTextFileName sebagai nama file yang akan disimpan
+					if (saveTextFileName.length === 0) { //Jika tidak ada nama berkas, nama berkas adalah "fileName"
+						saveTextFileName = "fileName";
+					}
 					const arr = teksHasil.split(','); //Buat array dari teksHasil dipisahkan dengan koma
 					const binary = atob(arr[1]); //Array ke-2 diubah dari ASCII ke binary
 					let n = binary.length;
 					const u8arr = new Uint8Array(n); //Buat array kosong uint8array
-						u8arr[n] = binary.codePointAt(n);
-					const file = new File([u8arr], "fileName", {
-						type: arr[0].match(/:(.*?);/)[1] //Ambil mime type dari array ke-1
-					});
-					if (saveTextFileName.length !== 0) {
-						downloadFile(saveTextFileName, file);
+					while (n--) {
+						u8arr[n] = binary.codePointAt(n); //Isi array uint8array dengan kode poin dari binary
 					}
-					else {
-						downloadFile("fileName", file);
-					}
+					const file = new File([u8arr], "", {type: arr[0].match(/:(.*?);/)[1]}); //Buat file baru dengan mime type dari array ke-1
+					downloadFile(saveTextFileName, file); //Unduh berkas
 				}
-				catch (err) {
+				catch (err) { //Jika data URL korup atau tidak ada data URL valid:
 					alert("Error: Only accept valid data URL Base64 format!");
 				}
 			}
 			function saveTextCode() {
 				const teksHasil = $("#teksHasil").val(); //Ambil isi dari teksHasil
+				let saveTextFileCodeName = $("#saveTextFileCodeName").val(); //Ambil isi saveTextFileCodeName sebagai nama file yang akan disimpan
+				if (saveTextFileCodeName.length === 0) {
+					saveTextFileCodeName = "filename";
+				}
 				const arrayKarakter = [...teksHasil]; //Ubah isi teksHasil menjadi array
 				const codepoints = [];
 				for (let i = 0; i < arrayKarakter.length; i++) {
 					codepoints[i] = "u" + arrayKarakter[i].codePointAt(0).toString(16);
 				}
 				const file = new Blob([codepoints.join("")], {type: "text/plain"}); //Buat Data URL dengan tipe teks
-				const saveTextFileCodeName = $("#saveTextFileCodeName").val(); //Ambil isi saveTextFileCodeName sebagai nama file yang akan disimpan
-				if (saveTextFileCodeName.length !== 0) { //Jika nama file tidak kosong
-					downloadFile(saveTextFileCodeName + ".ciphereki", file); //Simpan dengan nama file dengan ekstensi ciphereki
-				}
-				else { //Jika tidak ada nama file
-					downloadFile("fileName.ciphereki", file); //Simpan dengan nama filename.ciphereki
-				}
+				downloadFile(saveTextFileCodeName + ".ciphereki", file);
 			}</script></body></html>
 <!-- Ini Komentar -->

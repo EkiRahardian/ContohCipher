@@ -40,4 +40,4 @@ A¨ (2 Karakter Unicode: U+0041 dan U+00A8)
 
 Coba cipher dengan kunci positif:
 Caesar Key: 13141
-Vigenere Key: asdafaef
+Vigenere Key: 己所不欲,勿施于人。
