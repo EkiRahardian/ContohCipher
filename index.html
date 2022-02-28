@@ -84,117 +84,140 @@
 				<label for="saveText-fromEncryptedText">String to Ciphereki</label></div>
 		<script>
 			"use strict";
-			const caesar = {
-				key: 0,
-				direction: 1, //Variabel penentu apakah caesar cipher digeser ke depan atau belakang (Kalau 1 geser ke depan, kalau -1 geser ke belakang)
-				setKey() {
-					let angka = $("#caesar-keyInput").val(); //Ambil kunci caesar
-					if (angka.length !== 0) { //Jika kunci caesar tidak kosong, jalankan if
-						angka = parseInt(angka) * this.direction; //Menentukan apakah caesar cipher digeser ke depan atau belakang
-						this.key = angka;
-					}
-					else { //Jika kunci caesar kosong, maka kunci caesar adalah 0
-						this.key = 0;
-					}
-					$("#caesar-debug").html("Caesar key = " + this.key); //Menunjukkan kunci cipher yang sedang digunakan
-				},
-				setDirection() { //Fungsi untuk menentukan apakah caesar cipher digeser ke depan atau belakang
-					const button = $("#caesar-direction_button");
-					if (button.val() === "+") {
-						button.val("-");
-					}
-					else {
-						button.val("+");
-					}
-					this.direction *= -1;
-					this.setKey();
-				},
-			};
-			const vigenere = {
-				key: [0],
-				direction: 1, //Variabel penentu apakah vigenere cipher digeser ke depan atau belakang (Kalau 1 geser ke depan, kalau -1 geser ke belakang)
-				setKey() {
-					const huruf = $("#vigenere-keyInput").val(); //Ambil kunci vigenere
-					if (huruf.length !== 0) { //Jika kunci vigenere tidak kosong, jalankan if
-						const arrayKunci = [...huruf]; //Ubah kunci vigenere ke bentuk array berisi huruf
-						for (let i = 0; i < arrayKunci.length; i++) { //Jalankan sebanyak jumlah huruf pada arrayKunci
-							arrayKunci[i] = arrayKunci[i].codePointAt(0) * this.direction; //Ubah isi arrayKunci dari huruf ke kode poin tiap-tiap huruf sekaligus menentukan apakah vigenere cipher digeser ke depan atau belakang
+			const caesar = function() {
+				let key = 0;
+				let direction = 1; //Variabel penentu apakah caesar cipher digeser ke depan atau belakang (Kalau 1 geser ke depan, kalau -1 geser ke belakang)
+				const functions = {
+					getKey: function() {
+						return key;
+					},
+					getDirection: function() {
+						return direction;
+					},
+					setKey: function() {
+						let angka = $("#caesar-keyInput").val(); //Ambil kunci caesar
+						if (angka.length === 0) { //Jika kunci caesar kosong, maka kunci caesar adalah 0
+							key = 0;
 						}
-						this.key = arrayKunci;
-					}
-					else { //Jika kunci vigenere kosong, maka kunci vigenere adalah 0
-						this.key = [0];
-					}
-					$("#vigenere-debug").html("Vigenere key = " + this.key); //Menunjukkan semua kunci vigenere yang sedang digunakan
-				},
-				setDirection() { //Fungsi untuk mengubah apakah vigenere cipher digeser ke depan atau belakang
-					const button = $("#vigenere-direction_button");
-					if (button.val() === "+") {
-						button.val("-");
-					}
-					else {
-						button.val("+");
-					}
-					this.direction *= -1;
-					this.setKey();
-				},
-			};
-			const loadFile = {
-				asDataURL(input) {
-					const reader = new FileReader(); //Buka file
-					reader.readAsDataURL(input.files[0]); //Baca sebagai data URL Base64
-					reader.onload = function (event) { //Jika file sudah dimuat
-						$("#teks-Asal").val(event.target.result); //Hasil pengubahan dimuat di teks-Asal
-						$("#loadFile-asDataURL").val(""); //loadFile-asDataURL dikosongkan supaya dapat memuat file lainnya
-					};
-				},
-				asEncryptedText(input) { //Buka file dengan format .ciphereki
-					const reader = new FileReader(); //Buka file
-					reader.readAsText(input.files[0]); //Baca sebagai teks
-					reader.onload = function(event) { //Jika file sudah dimuat
-						const encode = event.target.result.split("u"); //File yang sudah dimuat dipisah dengan melihat huruf u
-						let encodeText = []; //Siapkan array kosong yang nantinya akan diisi teks hasil pengubahan kode poin ke karakter
-						encode.shift(); //Buang array bagian pertama karena bernilai null
-						for (let i = 0; i < encode.length; i++) {
-							encode[i] = "0x" + encode[i]; //Kode poin ditambahkan 0x supaya bisa diubah ke karakter
-							encodeText[i] = String.fromCodePoint(parseInt(encode[i], 16)); //Ubah kode poin ke karakter
+						else { //Jika kunci caesar tidak kosong, jalankan if
+							angka = parseInt(angka) * direction; //Menentukan apakah caesar cipher digeser ke depan atau belakang
+							key = angka;
 						}
-						$("#teks-Asal").val(encodeText.join("")); //Hasil pengubahan dimuat di teks-Asal
-						$("#loadFile-asEncryptedText").val(""); //loadFile-asEncryptedText dikosongkan supaya dapat memuat file lainnya
-					};
-				},
-			};
-			const cipherText = function () {
+						$("#caesar-debug").html("Caesar key = " + key); //Menunjukkan kunci cipher yang sedang digunakan
+					},
+					setDirection: function() { //Fungsi untuk menentukan apakah caesar cipher digeser ke depan atau belakang
+						const button = $("#caesar-direction_button");
+						if (button.val() === "+") {
+							button.val("-");
+						}
+						else {
+							button.val("+");
+						}
+						direction *= -1;
+						this.setKey();
+					},
+				};
+				Object.freeze(functions); //Bekukan fungsi supaya tidak bisa diubah-ubah lagi
+				return functions;
+			}();
+			const vigenere = function() {
+				let key = [0];
+				let direction = 1; //Variabel penentu apakah caesar cipher digeser ke depan atau belakang (Kalau 1 geser ke depan, kalau -1 geser ke belakang)
+				const functions = {
+					getKey: function() {
+						return key;
+					},
+					getDirection: function() {
+						return direction;
+					},
+					setKey: function() {
+						const huruf = $("#vigenere-keyInput").val(); //Ambil kunci vigenere
+						if (huruf.length === 0) { //Jika kunci vigenere kosong, maka kunci vigenere adalah 0
+							key = [0];
+						}
+						else { //Jika kunci vigenere tidak kosong
+							const arrayKunci = [...huruf]; //Ubah kunci vigenere ke bentuk array berisi huruf
+							for (let i = 0; i < arrayKunci.length; i++) { //Jalankan sebanyak jumlah huruf pada arrayKunci
+								arrayKunci[i] = arrayKunci[i].codePointAt(0) * direction; //Ubah isi arrayKunci dari huruf ke kode poin tiap-tiap huruf sekaligus menentukan apakah vigenere cipher digeser ke depan atau belakang
+							}
+							key = arrayKunci;
+						}
+						$("#vigenere-debug").html("Vigenere key = " + key); //Menunjukkan semua kunci vigenere yang sedang digunakan
+					},
+					setDirection: function() { //Fungsi untuk mengubah apakah vigenere cipher digeser ke depan atau belakang
+						const button = $("#vigenere-direction_button");
+						if (button.val() === "+") {
+							button.val("-");
+						}
+						else {
+							button.val("+");
+						}
+						direction *= -1;
+						this.setKey();
+					},
+				};
+				Object.freeze(functions); //Bekukan fungsi supaya tidak bisa diubah-ubah lagi
+				return functions;
+			}();
+			const loadFile = function() {
+				const reader = new FileReader(); //Buka file
+				const functions = {
+					asDataURL: function(input) {
+						reader.readAsDataURL(input.files[0]); //Baca sebagai data URL Base64
+						reader.onload = function (event) { //Jika file sudah dimuat
+							$("#teks-Asal").val(event.target.result); //Hasil pengubahan dimuat di teks-Asal
+							$("#loadFile-asDataURL").val(""); //loadFile-asDataURL dikosongkan supaya dapat memuat file lainnya
+						};
+					},
+					asEncryptedText: function(input) {
+						reader.readAsText(input.files[0]); //Baca sebagai teks
+						reader.onload = function(event) { //Jika file sudah dimuat
+							const encode = event.target.result.split("u"); //File yang sudah dimuat dipisah dengan melihat huruf u
+							encode.shift(); //Buang array bagian pertama karena bernilai null
+							for (let i = 0; i < encode.length; i++) {
+								encode[i] = "0x" + encode[i]; //Kode poin ditambahkan 0x supaya bisa diubah ke karakter
+								encode[i] = String.fromCodePoint(parseInt(encode[i], 16)); //Ubah kode poin ke karakter
+							}
+							$("#teks-Asal").val(encode.join("")); //Hasil pengubahan dimuat di teks-Asal
+							$("#loadFile-asEncryptedText").val(""); //loadFile-asEncryptedText dikosongkan supaya dapat memuat file lainnya
+						};
+					},
+				};
+				Object.freeze(functions); //Bekukan fungsi supaya tidak bisa diubah-ubah lagi
+				return functions;
+			}();
+			const cipherText = function() {
+				const caesarKey = caesar.getKey(); //Ambil kunci caesar
+				const vigenereKey = vigenere.getKey(); //Ambil kunci vigenere
 				let vigenereIndex = 0; //Buat variabel untuk menentukan posisi kunci vigenere yang akan digunakan
 				const arrayKarakter = [...$("#teks-Asal").val()]; //Ambil textarea teks-Asal dan ubah teks ke array berisi tiap-tiap huruf
 				let decrypting = false; //Buat variabel untuk menentukan apakah teks dienkripsi atau didekripsi, default enkripsi
-				const codepoints = []; //Buat array kosong yang nanti akan diisi kode poin
 				if (arrayKarakter.length > 1 && arrayKarakter[1].codePointAt(0) === 0) { //Memeriksa apakah karakter kedua adalah karakter dengan kode poin 0 jika teks terdapat lebih dari 1 karakter, jika iya maka teks akan didekripsi
 					decrypting = true;
 				}
+				let currentCodePoint;
 				for (let i = 0; i < arrayKarakter.length; i++) { //Jalankan sebanyak jumlah huruf pada arrayKarakter
-					if (arrayKarakter[i].codePointAt(0) === 0) { //Karakter dengan kode poin 0 akan dihapus
+					currentCodePoint = arrayKarakter[i].codePointAt(0);
+					if (currentCodePoint === 0) { //Karakter dengan kode poin 0 akan dihapus
 						arrayKarakter[i] = "";
 					}
 					else {
-						if (parseInt(arrayKarakter[i].codePointAt(0)) === 1) { //Jika karakter memiliki kode poin 1
-							codepoints[i] = 13 + parseInt(caesar.key) + parseInt(vigenere.key[vigenereIndex]); //Ubah kode poin 1 menjadi 13, lalu jumlahkan dengan kunci caesar dan kunci vigenere
+						if (currentCodePoint === 1) { //Ubah kode poin 1 menjadi 13
+							currentCodePoint = 13;
 						}
-						else {
-							codepoints[i] = arrayKarakter[i].codePointAt(0) + parseInt(caesar.key) + parseInt(vigenere.key[vigenereIndex]); //Jumlahkan kode poin per huruf dengan kunci caesar dan kunci vigenere
+						arrayKarakter[i] = currentCodePoint + parseInt(caesarKey) + parseInt(vigenereKey[vigenereIndex]); //Jumlahkan kode poin per huruf dengan kunci caesar dan kunci vigenere
+						while (arrayKarakter[i] < 2) { //Mencegah kode poin lebih kecil daripada 2
+							arrayKarakter[i] += 1114110; //1 + x = 1114111 (x = 1114110)
 						}
-						while (codepoints[i] < 2) { //Mencegah kode poin lebih kecil daripada 2
-							codepoints[i] += 1114110; //1 + x = 1114111 (x = 1114110)
+						while (arrayKarakter[i] > 1114111) { //Mencegah kode poin lebih besar daripada 1114111 (1114111 adalah kode terakhir)
+							arrayKarakter[i] -= 1114110; //1114112 - x = 2 (x = 1114110)
 						}
-						while (codepoints[i] > 1114111) { //Mencegah kode poin lebih besar daripada 1114111 (1114111 adalah kode terakhir)
-							codepoints[i] -= 1114110; //1114112 - x = 2 (x = 1114110)
+						if (arrayKarakter[i] === 13) { //Jika kode poin bernilai 13, yaitu carriage return yang akan berubah menjadi karakter dengan kode poin 10 di textarea,
+							arrayKarakter[i] = 1; //Maka ubah kode poin menjadi bernilai 1
 						}
-						if (codepoints[i] === 13) { //Jika kode poin bernilai 13, yaitu carriage return yang akan berubah menjadi karakter dengan kode poin 10 di textarea,
-							codepoints[i] = 1; //Maka ubah kode poin menjadi bernilai 1
-						}
-						arrayKarakter[i] = String.fromCodePoint(codepoints[i]); //ubah kode poin ke karakter dan ganti karakter asal ke karakter cipher
+						arrayKarakter[i] = String.fromCodePoint(arrayKarakter[i]); //ubah kode poin ke karakter dan ganti karakter asal ke karakter cipher
 						vigenereIndex += 1; //Ganti ke kunci vigenere selanjutnya
-						if (vigenereIndex === vigenere.key.length) { //Jika kunci vigenere terakhir sudah dipakai, balik ke kunci vigenere awal
+						if (vigenereIndex === vigenereKey.length) { //Jika kunci vigenere terakhir sudah dipakai, balik ke kunci vigenere awal
 							vigenereIndex = 0;
 						}
 					}
@@ -205,9 +228,9 @@
 				else {
 					$("#teks-Hasil").val(arrayKarakter.join("")); //Karakter hasil cipher digabungkan menjadi satu teks hasil cipher
 				}
-			}
-			const saveText = {
-				downloadFile(fileName, file) { //Fungsi unduh file
+			};
+			const saveText = function() {
+				const downloadFile = function(fileName, file) { //Fungsi unduh file
 					const a = document.createElement("a");
 					a.style = "display: none";
 					a.href = URL.createObjectURL(file);
@@ -215,39 +238,43 @@
 					document.body.appendChild(a);
 					a.click();
 					a.remove();
-				},
-				fromDataURL() { //Data URL Base64 to File
-					try { //Jika teks-Hasil berisi data URL Base64 valid, jalankan:
-						let fileName = $("#saveText-fromDataURL_name").val(); //Ambil isi dari saveText-fromDataURL_name sebagai nama file yang akan disimpan
+				};
+				const functions = {
+					fromDataURL: function() { //Data URL Base64 to File
+						try { //Jika teks-Hasil berisi data URL Base64 valid, jalankan:
+							let fileName = $("#saveText-fromDataURL_name").val(); //Ambil nama file yang akan disimpan
+							if (fileName.length === 0) { //Jika tidak ada nama berkas, nama berkas adalah "fileName"
+								fileName = "fileName";
+							}
+							const arr = $("#teks-Hasil").val().split(','); //Ambil isi dari teks-Hasil lalu buat array dipisahkan dengan koma
+							const binary = atob(arr[1]); //Array ke-2 diubah dari ASCII ke binary
+							let n = binary.length;
+							const u8arr = new Uint8Array(n); //Buat array kosong uint8array
+							while (n--) {
+								u8arr[n] = binary.codePointAt(n); //Isi array uint8array dengan kode poin dari binary
+							}
+							const file = new File([u8arr], "", {type: arr[0].match(/:(.*?);/)[1]}); //Buat file baru dengan mime type dari array ke-1
+							downloadFile(fileName, file); //Unduh berkas
+						}
+						catch (err) { //Jika data URL korup atau tidak ada data URL valid:
+							alert("Error: Only accept valid data URL Base64 format!");
+						}
+					},
+					fromEncryptedText: function() {
+						let fileName = $("#saveText-fromEncryptedText_name").val(); //Ambil nama file yang akan disimpan
 						if (fileName.length === 0) { //Jika tidak ada nama berkas, nama berkas adalah "fileName"
 							fileName = "fileName";
 						}
-						const arr = $("#teks-Hasil").val().split(','); //Ambil isi dari teks-Hasil lalu buat array dipisahkan dengan koma
-						const binary = atob(arr[1]); //Array ke-2 diubah dari ASCII ke binary
-						let n = binary.length;
-						const u8arr = new Uint8Array(n); //Buat array kosong uint8array
-						while (n--) {
-							u8arr[n] = binary.codePointAt(n); //Isi array uint8array dengan kode poin dari binary
+						const arrayKarakter = [...$("#teks-Hasil").val()]; //Ambil isi dari teks-Hasil lalu ubah menjadi array
+						const codepoints = [];
+						for (let i = 0; i < arrayKarakter.length; i++) {
+							codepoints[i] = "u" + arrayKarakter[i].codePointAt(0).toString(16);
 						}
-						const file = new File([u8arr], "", {type: arr[0].match(/:(.*?);/)[1]}); //Buat file baru dengan mime type dari array ke-1
-						this.downloadFile(fileName, file); //Unduh berkas
-					}
-					catch (err) { //Jika data URL korup atau tidak ada data URL valid:
-						alert("Error: Only accept valid data URL Base64 format!");
-					}
-				},
-				fromEncryptedText() {
-					let fileName = $("#saveText-fromEncryptedText_name").val(); //Ambil isi saveText-fromEncryptedText_name sebagai nama file yang akan disimpan
-					if (fileName.length === 0) { //Jika tidak ada nama berkas, nama berkas adalah "fileName"
-						fileName = "filename";
-					}
-					const arrayKarakter = [...$("#teks-Hasil").val()]; //Ambil isi dari teks-Hasil lalu ubah menjadi array
-					const codepoints = [];
-					for (let i = 0; i < arrayKarakter.length; i++) {
-						codepoints[i] = "u" + arrayKarakter[i].codePointAt(0).toString(16);
-					}
-					const file = new Blob([codepoints.join("")], {type: "text/plain"}); //Buat Data URL dengan tipe teks
-					this.downloadFile(fileName + ".ciphereki", file);
-				},
-			};</script></body></html>
+						const file = new Blob([codepoints.join("")], {type: "text/plain"}); //Buat Data URL dengan tipe teks
+						downloadFile(fileName + ".ciphereki", file);
+					},
+				};
+				Object.freeze(functions); //Bekukan fungsi supaya tidak bisa diubah-ubah lagi
+				return functions;
+			}();</script></body></html>
 <!-- Ini Komentar -->
