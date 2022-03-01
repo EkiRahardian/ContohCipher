@@ -28,28 +28,28 @@
 				<label for="loadFile-asEncryptedText">Ciphereki to String</label></div>
 		<div style="background-color: lightblue;">
 			<p>Caesar Key:</p>
-			<input id="caesar-keyInput"
+			<input id="caesar-input"
 				oninput="$(this).val(this.value.replace(/[^0-9]/g, '')); caesar.setKey(); //JS"
 				type="text"
 				size="98"/>
 			<br>
-			<input id="caesar-direction_button"
+			<input id="caesar-direction"
 				onclick="caesar.setDirection(); //JS"
 				type="button"
 				value="+"/>
-			<p id="caesar-debug">Caesar key = 0</p></div>
+			<p id="caesar-display">Caesar key = 0</p></div>
 		<div style="background-color: lightpink;">
 			<p>Vigenere Key:</p>
-			<textarea id="vigenere-keyInput"
+			<textarea id="vigenere-input"
 				oninput="vigenere.setKey(); //JS"
 				rows="10"
 				cols="100"></textarea>
 			<br>
-			<input id="vigenere-direction_button"
+			<input id="vigenere-direction"
 				onclick="vigenere.setDirection(); //JS"
 				type="button"
 				value="+"/>
-			<p id="vigenere-debug">Vigenere key = 0</p></div>
+			<p id="vigenere-display">Vigenere key = 0</p></div>
 		<div style="background-color: mediumpurple;">
 			<input id="cipherText"
 				onclick="cipherText(); //JS"
@@ -63,7 +63,7 @@
 				autocapitalize="off"
 				readonly></textarea>
 			<input id="moveUp"
-				onclick="$('#teks-Asal').val(''); $('#teks-Asal').val($('#teks-Hasil').val()); //JS"
+				onclick="$('#teks-Asal').val($('#teks-Hasil').val()); //JS"
 				type="button"
 				value="↑"/>
 			<br>
@@ -91,22 +91,18 @@
 					getKey: function() {
 						return key;
 					},
-					getDirection: function() {
-						return direction;
-					},
 					setKey: function() {
-						let angka = $("#caesar-keyInput").val(); //Ambil kunci caesar
-						if (angka.length === 0) { //Jika kunci caesar kosong, maka kunci caesar adalah 0
+						let input = $("#caesar-input").val(); //Ambil kunci caesar dari input pengguna
+						if (input.length === 0) { //Jika kunci caesar kosong, maka kunci caesar adalah 0
 							key = 0;
 						}
-						else { //Jika kunci caesar tidak kosong, jalankan if
-							angka = parseInt(angka) * direction; //Menentukan apakah caesar cipher digeser ke depan atau belakang
-							key = angka;
+						else { //Jika kunci caesar tidak kosong
+							key = parseInt(input) * direction; //Menentukan apakah caesar cipher digeser ke depan atau belakang
 						}
-						$("#caesar-debug").html("Caesar key = " + key); //Menunjukkan kunci cipher yang sedang digunakan
+						$("#caesar-display").html("Caesar key = " + key); //Menampilkan kunci cipher yang sedang digunakan
 					},
 					setDirection: function() { //Fungsi untuk menentukan apakah caesar cipher digeser ke depan atau belakang
-						const button = $("#caesar-direction_button");
+						const button = $("#caesar-direction");
 						if (button.val() === "+") {
 							button.val("-");
 						}
@@ -127,25 +123,20 @@
 					getKey: function() {
 						return key;
 					},
-					getDirection: function() {
-						return direction;
-					},
 					setKey: function() {
-						const huruf = $("#vigenere-keyInput").val(); //Ambil kunci vigenere
-						if (huruf.length === 0) { //Jika kunci vigenere kosong, maka kunci vigenere adalah 0
+						const input = [...$("#vigenere-input").val()]; //Ambil kunci vigenere dari input pengguna dalam bentuk array huruf
+						if (input.length === 0) { //Jika kunci vigenere kosong, maka kunci vigenere adalah 0
 							key = [0];
 						}
 						else { //Jika kunci vigenere tidak kosong
-							const arrayKunci = [...huruf]; //Ubah kunci vigenere ke bentuk array berisi huruf
-							for (let i = 0; i < arrayKunci.length; i++) { //Jalankan sebanyak jumlah huruf pada arrayKunci
-								arrayKunci[i] = arrayKunci[i].codePointAt(0) * direction; //Ubah isi arrayKunci dari huruf ke kode poin tiap-tiap huruf sekaligus menentukan apakah vigenere cipher digeser ke depan atau belakang
+							for (let i = 0; i < input.length; i++) { //Jalankan sebanyak jumlah huruf pada input
+								key[i] = input[i].codePointAt(0) * direction; //Ubah isi huruf ke kode poin tiap-tiap huruf sekaligus menentukan apakah vigenere cipher digeser ke depan atau belakang
 							}
-							key = arrayKunci;
 						}
-						$("#vigenere-debug").html("Vigenere key = " + key); //Menunjukkan semua kunci vigenere yang sedang digunakan
+						$("#vigenere-display").html("Vigenere key = " + key); //Menunjukkan semua kunci vigenere yang sedang digunakan
 					},
 					setDirection: function() { //Fungsi untuk mengubah apakah vigenere cipher digeser ke depan atau belakang
-						const button = $("#vigenere-direction_button");
+						const button = $("#vigenere-direction");
 						if (button.val() === "+") {
 							button.val("-");
 						}
@@ -172,10 +163,9 @@
 					asEncryptedText: function(input) {
 						reader.readAsText(input.files[0]); //Baca sebagai teks
 						reader.onload = function(event) { //Jika file sudah dimuat
-							const encode = event.target.result.split("u"); //File yang sudah dimuat dipisah dengan melihat huruf u
+							const encode = event.target.result.split("u"); //File yang sudah dimuat dipisah dengan huruf u sebagai pembatas
 							encode.shift(); //Buang array bagian pertama karena bernilai null
 							for (let i = 0; i < encode.length; i++) {
-								encode[i] = "0x" + encode[i]; //Kode poin ditambahkan 0x supaya bisa diubah ke karakter
 								encode[i] = String.fromCodePoint(parseInt(encode[i], 16)); //Ubah kode poin ke karakter
 							}
 							$("#teks-Asal").val(encode.join("")); //Hasil pengubahan dimuat di teks-Asal
@@ -195,7 +185,7 @@
 				if (arrayKarakter.length > 1 && arrayKarakter[1].codePointAt(0) === 0) { //Memeriksa apakah karakter kedua adalah karakter dengan kode poin 0 jika teks terdapat lebih dari 1 karakter, jika iya maka teks akan didekripsi
 					decrypting = true;
 				}
-				let currentCodePoint;
+				let currentCodePoint; //Buat array untuk menampung kode poin yang sedang diubah
 				for (let i = 0; i < arrayKarakter.length; i++) { //Jalankan sebanyak jumlah huruf pada arrayKarakter
 					currentCodePoint = arrayKarakter[i].codePointAt(0);
 					if (currentCodePoint === 0) { //Karakter dengan kode poin 0 akan dihapus

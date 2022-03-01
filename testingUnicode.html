@@ -9,7 +9,8 @@
 		<p id="beda"></p>
 		<script>
 			const different = [];
-			const huruf = document.getElementById("huruf");
+			const huruf = document.getElementById("huruf"); //textarea
+			const beda = document.getElementById("beda"); //p
 			for (let codepoint = 0; codepoint <= 1114111; codepoint++) {
 				if (codepoint === 1114111) {
 					huruf.value = String.fromCodePoint(codepoint);
@@ -22,8 +23,8 @@
 					different.push(String(codepoint) + " != " + number + "<br>");
 				}
 			}
-			document.getElementById("beda").innerHTML = different.join("");
-			//document.getElementById("huruf").value = [String.fromCodePoint(56319), String.fromCodePoint(56320)].join("");
+			beda.innerHTML = different.join("");
+			//huruf.value = [String.fromCodePoint(56319), String.fromCodePoint(56320)].join("");
 		</script>
 	</body>
 </html>
