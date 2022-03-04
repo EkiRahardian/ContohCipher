@@ -21,11 +21,11 @@
 				type="file"/>
 				<label for="loadFile-asDataURL">File to data URL Base64</label>
 			<br>
-			<input id="loadFile-asEncryptedText"
-				onchange="loadFile.asEncryptedText(this); //JS"
+			<input id="loadFile-asCipheredText"
+				onchange="loadFile.asCipheredText(this); //JS"
 				type="file"
 				accept=".ciphereki"/>
-				<label for="loadFile-asEncryptedText">Ciphereki to String</label></div>
+				<label for="loadFile-asCipheredText">Ciphereki to Text</label></div>
 		<div style="background-color: lightblue;">
 			<p>Caesar Key:</p>
 			<input id="caesar-input"
@@ -67,27 +67,24 @@
 				type="button"
 				value="↑"/>
 			<br>
-			<input id="saveText-fromDataURL_name"
+			<input id="saveText-fileName"
 				type="text"/>
 			<input id="saveText-fromDataURL"
 				onclick="saveText.fromDataURL(); //JS"
 				type="button"
 				value="Save File"/>
 				<label for="saveText-fromDataURL">Data URL Base64 to File</label>
-			<br>
-			<input id="saveText-fromEncryptedText_name"
-				type="text"/>
-			<input id="saveText-fromEncryptedText"
-				onclick="saveText.fromEncryptedText(); //JS"
+			<input id="saveText-fromCipheredText"
+				onclick="saveText.fromCipheredText(); //JS"
 				type="button" 
 				value="Save File"/>
-				<label for="saveText-fromEncryptedText">String to Ciphereki</label></div>
+				<label for="saveText-fromCipheredText">Text to Ciphereki</label></div>
 		<script>
 			"use strict";
 			const caesar = function() {
 				let key = 0;
 				let direction = 1; //Variabel penentu apakah caesar cipher digeser ke depan atau belakang (Kalau 1 geser ke depan, kalau -1 geser ke belakang)
-				const functions = {
+				const publicFunctions = {
 					getKey: function() {
 						return key;
 					},
@@ -113,13 +110,13 @@
 						this.setKey();
 					},
 				};
-				Object.freeze(functions); //Bekukan fungsi supaya tidak bisa diubah-ubah lagi
-				return functions;
+				Object.freeze(publicFunctions); //Bekukan fungsi supaya tidak bisa diubah-ubah lagi
+				return publicFunctions;
 			}();
 			const vigenere = function() {
 				let key = [0];
 				let direction = 1; //Variabel penentu apakah caesar cipher digeser ke depan atau belakang (Kalau 1 geser ke depan, kalau -1 geser ke belakang)
-				const functions = {
+				const publicFunctions = {
 					getKey: function() {
 						return key;
 					},
@@ -147,34 +144,34 @@
 						this.setKey();
 					},
 				};
-				Object.freeze(functions); //Bekukan fungsi supaya tidak bisa diubah-ubah lagi
-				return functions;
+				Object.freeze(publicFunctions); //Bekukan fungsi supaya tidak bisa diubah-ubah lagi
+				return publicFunctions;
 			}();
 			const loadFile = function() {
-				const reader = new FileReader(); //Buka file
-				const functions = {
+				const fileReader = new FileReader(); //Buka file
+				const publicFunctions = {
 					asDataURL: function(input) {
-						reader.readAsDataURL(input.files[0]); //Baca sebagai data URL Base64
-						reader.onload = function (event) { //Jika file sudah dimuat
+						fileReader.readAsDataURL(input.files[0]); //Baca sebagai data URL Base64
+						fileReader.onload = function (event) { //Jika file sudah dimuat
 							$("#teks-Asal").val(event.target.result); //Hasil pengubahan dimuat di teks-Asal
 							$("#loadFile-asDataURL").val(""); //loadFile-asDataURL dikosongkan supaya dapat memuat file lainnya
 						};
 					},
-					asEncryptedText: function(input) {
-						reader.readAsText(input.files[0]); //Baca sebagai teks
-						reader.onload = function(event) { //Jika file sudah dimuat
+					asCipheredText: function(input) {
+						fileReader.readAsText(input.files[0]); //Baca sebagai teks
+						fileReader.onload = function(event) { //Jika file sudah dimuat
 							const encode = event.target.result.split("u"); //File yang sudah dimuat dipisah dengan huruf u sebagai pembatas
 							encode.shift(); //Buang array bagian pertama karena bernilai null
 							for (let i = 0; i < encode.length; i++) {
 								encode[i] = String.fromCodePoint(parseInt(encode[i], 16)); //Ubah kode poin ke karakter
 							}
 							$("#teks-Asal").val(encode.join("")); //Hasil pengubahan dimuat di teks-Asal
-							$("#loadFile-asEncryptedText").val(""); //loadFile-asEncryptedText dikosongkan supaya dapat memuat file lainnya
+							$("#loadFile-asCipheredText").val(""); //loadFile-asCipheredText dikosongkan supaya dapat memuat file lainnya
 						};
 					},
 				};
-				Object.freeze(functions); //Bekukan fungsi supaya tidak bisa diubah-ubah lagi
-				return functions;
+				Object.freeze(publicFunctions); //Bekukan fungsi supaya tidak bisa diubah-ubah lagi
+				return publicFunctions;
 			}();
 			const cipherText = function() {
 				const caesarKey = caesar.getKey(); //Ambil kunci caesar
@@ -229,13 +226,17 @@
 					a.click();
 					a.remove();
 				};
-				const functions = {
+				const getFileName = function () {
+					let fileName = $("#saveText-fileName").val(); //Ambil nama file yang akan disimpan
+					if (fileName.length === 0) { //Jika tidak ada nama berkas, nama berkas adalah "fileName"
+						fileName = "fileName";
+					}
+					return fileName;
+				};
+				const publicFunctions = {
 					fromDataURL: function() { //Data URL Base64 to File
 						try { //Jika teks-Hasil berisi data URL Base64 valid, jalankan:
-							let fileName = $("#saveText-fromDataURL_name").val(); //Ambil nama file yang akan disimpan
-							if (fileName.length === 0) { //Jika tidak ada nama berkas, nama berkas adalah "fileName"
-								fileName = "fileName";
-							}
+							const fileName = getFileName();
 							const arr = $("#teks-Hasil").val().split(','); //Ambil isi dari teks-Hasil lalu buat array dipisahkan dengan koma
 							const binary = atob(arr[1]); //Array ke-2 diubah dari ASCII ke binary
 							let n = binary.length;
@@ -250,11 +251,8 @@
 							alert("Error: Only accept valid data URL Base64 format!");
 						}
 					},
-					fromEncryptedText: function() {
-						let fileName = $("#saveText-fromEncryptedText_name").val(); //Ambil nama file yang akan disimpan
-						if (fileName.length === 0) { //Jika tidak ada nama berkas, nama berkas adalah "fileName"
-							fileName = "fileName";
-						}
+					fromCipheredText: function() {
+						const fileName = getFileName();
 						const arrayKarakter = [...$("#teks-Hasil").val()]; //Ambil isi dari teks-Hasil lalu ubah menjadi array
 						const codepoints = [];
 						for (let i = 0; i < arrayKarakter.length; i++) {
@@ -264,7 +262,7 @@
 						downloadFile(fileName + ".ciphereki", file);
 					},
 				};
-				Object.freeze(functions); //Bekukan fungsi supaya tidak bisa diubah-ubah lagi
-				return functions;
+				Object.freeze(publicFunctions); //Bekukan fungsi supaya tidak bisa diubah-ubah lagi
+				return publicFunctions;
 			}();</script></body></html>
 <!-- Ini Komentar -->
