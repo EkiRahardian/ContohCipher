@@ -10,7 +10,7 @@
 	<body>
 		<div style="background-color: lightgreen;">
 			<p>Original Text:</p>
-			<textarea id="teks-Asal"
+			<textarea id="teks-input"
 				rows="30"
 				cols="100"
 				spellcheck="false" 
@@ -56,14 +56,14 @@
 				type="button"
 				value="Jalankan cipher"/>
 			<p>Cipher Text:</p>
-			<textarea id="teks-Hasil"
+			<textarea id="teks-output"
 				rows="30"
 				cols="100"
 				spellcheck="false"
 				autocapitalize="off"
 				readonly></textarea>
 			<input id="moveUp"
-				onclick="$('#teks-Asal').val($('#teks-Hasil').val()); //JS"
+				onclick="$('#teks-input').val($('#teks-output').val()); //JS"
 				type="button"
 				value="↑"/>
 			<br>
@@ -153,7 +153,7 @@
 					asDataURL: function(input) {
 						fileReader.readAsDataURL(input.files[0]); //Baca sebagai data URL Base64
 						fileReader.onload = function (event) { //Jika file sudah dimuat
-							$("#teks-Asal").val(event.target.result); //Hasil pengubahan dimuat di teks-Asal
+							$("#teks-input").val(event.target.result); //Hasil pengubahan dimuat di teks-input
 							$("#loadFile-asDataURL").val(""); //loadFile-asDataURL dikosongkan supaya dapat memuat file lainnya
 						};
 					},
@@ -165,7 +165,7 @@
 							for (let i = 0; i < encode.length; i++) {
 								encode[i] = String.fromCodePoint(parseInt(encode[i], 16)); //Ubah kode poin ke karakter
 							}
-							$("#teks-Asal").val(encode.join("")); //Hasil pengubahan dimuat di teks-Asal
+							$("#teks-input").val(encode.join("")); //Hasil pengubahan dimuat di teks-input
 							$("#loadFile-asCipheredText").val(""); //loadFile-asCipheredText dikosongkan supaya dapat memuat file lainnya
 						};
 					},
@@ -177,11 +177,12 @@
 				const caesarKey = caesar.getKey(); //Ambil kunci caesar
 				const vigenereKey = vigenere.getKey(); //Ambil kunci vigenere
 				let vigenereIndex = 0; //Buat variabel untuk menentukan posisi kunci vigenere yang akan digunakan
-				const arrayKarakter = [...$("#teks-Asal").val()]; //Ambil textarea teks-Asal dan ubah teks ke array berisi tiap-tiap huruf
 				let decrypting = false; //Buat variabel untuk menentukan apakah teks dienkripsi atau didekripsi, default enkripsi
-				if (arrayKarakter.length > 1 && arrayKarakter[1].codePointAt(0) === 0) { //Memeriksa apakah karakter kedua adalah karakter dengan kode poin 0 jika teks terdapat lebih dari 1 karakter, jika iya maka teks akan didekripsi
+				if ($("#teks-input").val().split("\x00").length > 1) { //Memeriksa apakah teks dipisah dengan karakter dengan kode poin 0 yang berarti teks adalah teks terenkripsi
 					decrypting = true;
 				}
+				const arrayKarakter = [...$("#teks-input").val()]; //Ambil textarea teks-input dan ubah teks ke array berisi tiap-tiap huruf
+
 				let currentCodePoint; //Buat array untuk menampung kode poin yang sedang diubah
 				for (let i = 0; i < arrayKarakter.length; i++) { //Jalankan sebanyak jumlah huruf pada arrayKarakter
 					currentCodePoint = arrayKarakter[i].codePointAt(0);
@@ -210,10 +211,10 @@
 					}
 				}
 				if (decrypting === false) { //Jika sedang mengenkripsi
-					$("#teks-Hasil").val(arrayKarakter.join(String.fromCodePoint(0))); //Selipkan karakter dengan kode poin 0 untuk mencegah dua karakter surrogate pair menggabungkan diri dan membentuk karakter baru
+					$("#teks-output").val(arrayKarakter.join(String.fromCodePoint(0))); //Selipkan karakter dengan kode poin 0 untuk mencegah dua karakter surrogate pair menggabungkan diri dan membentuk karakter baru
 				}
 				else {
-					$("#teks-Hasil").val(arrayKarakter.join("")); //Karakter hasil cipher digabungkan menjadi satu teks hasil cipher
+					$("#teks-output").val(arrayKarakter.join("")); //Karakter hasil cipher digabungkan menjadi satu teks hasil cipher
 				}
 			};
 			const saveText = function() {
@@ -235,9 +236,9 @@
 				};
 				const publicFunctions = {
 					fromDataURL: function() { //Data URL Base64 to File
-						try { //Jika teks-Hasil berisi data URL Base64 valid, jalankan:
+						try { //Jika teks-output berisi data URL Base64 valid, jalankan:
 							const fileName = getFileName();
-							const arr = $("#teks-Hasil").val().split(','); //Ambil isi dari teks-Hasil lalu buat array dipisahkan dengan koma
+							const arr = $("#teks-output").val().split(','); //Ambil isi dari teks-output lalu buat array dipisahkan dengan koma
 							const binary = atob(arr[1]); //Array ke-2 diubah dari ASCII ke binary
 							let n = binary.length;
 							const u8arr = new Uint8Array(n); //Buat array kosong uint8array
@@ -253,7 +254,7 @@
 					},
 					fromCipheredText: function() {
 						const fileName = getFileName();
-						const arrayKarakter = [...$("#teks-Hasil").val()]; //Ambil isi dari teks-Hasil lalu ubah menjadi array
+						const arrayKarakter = [...$("#teks-output").val()]; //Ambil isi dari teks-output lalu ubah menjadi array
 						const codepoints = [];
 						for (let i = 0; i < arrayKarakter.length; i++) {
 							codepoints[i] = "u" + arrayKarakter[i].codePointAt(0).toString(16);
