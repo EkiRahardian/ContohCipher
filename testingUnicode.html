@@ -16,7 +16,7 @@
 					huruf.value = String.fromCodePoint(codepoint);
 				}
 				else {
-					huruf.value = [String.fromCodePoint(codepoint) + String.fromCodePoint(codepoint+1)].join("");
+					huruf.value = String.fromCodePoint(codepoint) + String.fromCodePoint(codepoint+1);
 				}
 				const number = huruf.value.codePointAt(0);
 				if (codepoint !== number) {
