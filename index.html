@@ -128,7 +128,7 @@
 						}
 						else { //Jika kunci vigenere tidak kosong
 							for (let i = 0; i < input.length; i++) { //Jalankan sebanyak jumlah huruf pada input
-								key[i] = input[i].codePointAt(0) * direction; //Ubah isi huruf ke kode poin tiap-tiap huruf sekaligus menentukan apakah vigenere cipher digeser ke depan atau belakang
+								key[i] = input[i].codePointAt(0) * direction; //Ubah isi huruf ke poin kode tiap-tiap huruf sekaligus menentukan apakah vigenere cipher digeser ke depan atau belakang
 							}
 						}
 						$("#vigenere\\.display").html("Vigenere key = " + key); //Menunjukkan semua kunci vigenere yang sedang digunakan
@@ -163,7 +163,7 @@
 						fileReader.onload = function(event) { //Jika file sudah dimuat
 							const encode = event.target.result.split(" "); //File yang sudah dimuat dipisah dengan spasi sebagai pembatas
 							for (let i = 0; i < encode.length; i++) {
-								encode[i] = String.fromCodePoint(parseInt(encode[i], 16)); //Ubah kode poin ke karakter
+								encode[i] = String.fromCodePoint(parseInt(encode[i], 16)); //Ubah poin kode ke karakter
 							}
 							$("#teks\\.input").val(encode.join("")); //Hasil pengubahan dimuat di teks.input
 							$("#loadFile\\.asCipheredText").val(""); //loadFile.asCipheredText dikosongkan supaya dapat memuat file lainnya
@@ -181,31 +181,31 @@
 						let vigenereIndex = 0; //Buat variabel untuk menentukan posisi kunci vigenere yang akan digunakan
 						let decrypting = false; //Buat variabel untuk menentukan apakah teks dienkripsi atau didekripsi, default enkripsi
 						const textInput = $("#teks\\.input").val(); //Ambil teks dari textarea teks.input
-						if (textInput.split("\x00").length > 1) { //Memeriksa apakah teks dipisah dengan karakter dengan kode poin 0 yang berarti teks adalah teks terenkripsi
+						if (textInput.split("\x00").length > 1) { //Memeriksa apakah teks dipisah dengan karakter dengan poin kode 0 yang berarti teks adalah teks terenkripsi
 							decrypting = true;
 						}
 						const characterArray = [...textInput]; //Ubah teks ke array berisi tiap-tiap huruf
-						let currentCodePoint; //Buat array untuk menampung kode poin yang sedang diubah
+						let currentCodePoint; //Buat array untuk menampung poin kode yang sedang diubah
 						for (let i = 0; i < characterArray.length; i++) { //Jalankan sebanyak jumlah huruf pada characterArray
 							currentCodePoint = characterArray[i].codePointAt(0);
-							if (currentCodePoint === 0) { //Karakter dengan kode poin 0 akan dihapus
+							if (currentCodePoint === 0) { //Karakter dengan poin kode 0 akan dihapus
 								characterArray[i] = "";
 							}
 							else {
-								if (currentCodePoint === 1) { //Ubah kode poin 1 menjadi 13
+								if (currentCodePoint === 1) { //Ubah poin kode 1 menjadi 13
 									currentCodePoint = 13;
 								}
-								characterArray[i] = currentCodePoint + parseInt(caesarKey) + parseInt(vigenereKey[vigenereIndex]); //Jumlahkan kode poin per huruf dengan kunci caesar dan kunci vigenere
-								while (characterArray[i] < 2) { //Mencegah kode poin lebih kecil daripada 2
+								characterArray[i] = currentCodePoint + parseInt(caesarKey) + parseInt(vigenereKey[vigenereIndex]); //Jumlahkan poin kode per huruf dengan kunci caesar dan kunci vigenere
+								while (characterArray[i] < 2) { //Mencegah poin kode lebih kecil daripada 2
 									characterArray[i] += 1114110; //1 + x = 1114111 (x = 1114110)
 								}
-								while (characterArray[i] > 1114111) { //Mencegah kode poin lebih besar daripada 1114111 (1114111 adalah kode terakhir)
+								while (characterArray[i] > 1114111) { //Mencegah poin kode lebih besar daripada 1114111 (1114111 adalah kode terakhir)
 									characterArray[i] -= 1114110; //1114112 - x = 2 (x = 1114110)
 								}
-								if (characterArray[i] === 13) { //Jika kode poin bernilai 13, yaitu carriage return yang akan berubah menjadi karakter dengan kode poin 10 di textarea,
-									characterArray[i] = 1; //Maka ubah kode poin menjadi bernilai 1
+								if (characterArray[i] === 13) { //Jika poin kode bernilai 13, yaitu carriage return yang akan berubah menjadi karakter dengan poin kode 10 di textarea,
+									characterArray[i] = 1; //Maka ubah poin kode menjadi bernilai 1
 								}
-								characterArray[i] = String.fromCodePoint(characterArray[i]); //ubah kode poin ke karakter dan ganti karakter asal ke karakter cipher
+								characterArray[i] = String.fromCodePoint(characterArray[i]); //ubah poin kode ke karakter dan ganti karakter asal ke karakter cipher
 								vigenereIndex += 1; //Ganti ke kunci vigenere selanjutnya
 								if (vigenereIndex === vigenereKey.length) { //Jika kunci vigenere terakhir sudah dipakai, balik ke kunci vigenere awal
 									vigenereIndex = 0;
@@ -213,7 +213,7 @@
 							}
 						}
 						if (decrypting === false) { //Jika sedang mengenkripsi
-							$("#teks\\.output").val(characterArray.join(String.fromCodePoint(0))); //Selipkan karakter dengan kode poin 0 untuk mencegah dua karakter surrogate pair menggabungkan diri dan membentuk karakter baru
+							$("#teks\\.output").val(characterArray.join(String.fromCodePoint(0))); //Selipkan karakter dengan poin kode 0 untuk mencegah dua karakter surrogate pair menggabungkan diri dan membentuk karakter baru
 						}
 						else {
 							$("#teks\\.output").val(characterArray.join("")); //Karakter hasil cipher digabungkan menjadi satu teks hasil cipher
@@ -225,7 +225,7 @@
 			}();
 			const saveText = function() {
 				const getFileName = function () {
-					const fileName = $("#saveText\\.fileName").val(); //Ambil nama file yang akan disimpan
+					let fileName = $("#saveText\\.fileName").val(); //Ambil nama file yang akan disimpan
 					if (fileName.length === 0) { //Jika tidak ada nama berkas, nama berkas adalah "fileName"
 						fileName = "fileName";
 					}
@@ -245,11 +245,11 @@
 						try { //Jika teks.output berisi data URL Base64 valid, jalankan:
 							const fileName = getFileName();
 							const arr = $("#teks\\.output").val().split(','); //Ambil isi dari teks.output lalu buat array dipisahkan dengan koma
-							const binary = atob(arr[1]); //Array ke-2 diubah dari ASCII ke binary
+							const binary = atob(arr[1]); //Array ke-2 diubah dari Base64 ke teks
 							let n = binary.length;
 							const u8arr = new Uint8Array(n); //Buat array kosong uint8array
 							while (n--) {
-								u8arr[n] = binary.codePointAt(n); //Isi array uint8array dengan kode poin dari binary
+								u8arr[n] = binary.codePointAt(n); //Isi array uint8array dengan poin kode dari teks
 							}
 							const file = new File([u8arr], "", {type: arr[0].match(/:(.*?);/)[1]}); //Buat file baru dengan mime type dari array ke-1
 							downloadFile(fileName, file); //Unduh berkas
