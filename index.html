@@ -179,11 +179,7 @@
 						const caesarKey = caesar.getKey(); //Ambil kunci caesar
 						const vigenereKey = vigenere.getKey(); //Ambil kunci vigenere
 						let vigenereIndex = 0; //Buat variabel untuk menentukan posisi kunci vigenere yang akan digunakan
-						let decrypting = false; //Buat variabel untuk menentukan apakah teks dienkripsi atau didekripsi, default enkripsi
 						const textInput = $("#teks\\.input").val(); //Ambil teks dari textarea teks.input
-						if (textInput.split("\x00").length > 1) { //Memeriksa apakah teks dipisah dengan karakter dengan poin kode 0 yang berarti teks adalah teks terenkripsi
-							decrypting = true;
-						}
 						const characterArray = [...textInput]; //Ubah teks ke array berisi tiap-tiap huruf
 						let currentCodePoint; //Buat array untuk menampung poin kode yang sedang diubah
 						for (let i = 0; i < characterArray.length; i++) { //Jalankan sebanyak jumlah huruf pada characterArray
@@ -195,7 +191,7 @@
 								if (currentCodePoint === 1) { //Ubah poin kode 1 menjadi 13
 									currentCodePoint = 13;
 								}
-								characterArray[i] = currentCodePoint + parseInt(caesarKey) + parseInt(vigenereKey[vigenereIndex]); //Jumlahkan poin kode per huruf dengan kunci caesar dan kunci vigenere
+								characterArray[i] = currentCodePoint + caesarKey + vigenereKey[vigenereIndex]; //Jumlahkan poin kode per huruf dengan kunci caesar dan kunci vigenere
 								while (characterArray[i] < 2) { //Mencegah poin kode lebih kecil daripada 2
 									characterArray[i] += 1114110; //1 + x = 1114111 (x = 1114110)
 								}
@@ -212,11 +208,11 @@
 								}
 							}
 						}
-						if (decrypting === false) { //Jika sedang mengenkripsi
-							$("#teks\\.output").val(characterArray.join(String.fromCodePoint(0))); //Selipkan karakter dengan poin kode 0 untuk mencegah dua karakter surrogate pair menggabungkan diri dan membentuk karakter baru
+						if (textInput.split("\x00").length > 1) { //Memeriksa apakah teks dipisah dengan karakter dengan poin kode 0 yang berarti teks adalah teks terenkripsi
+							$("#teks\\.output").val(characterArray.join("")); //Karakter hasil cipher digabungkan menjadi satu teks hasil cipher
 						}
 						else {
-							$("#teks\\.output").val(characterArray.join("")); //Karakter hasil cipher digabungkan menjadi satu teks hasil cipher
+							$("#teks\\.output").val(characterArray.join(String.fromCodePoint(0))); //Selipkan karakter dengan poin kode 0 untuk mencegah dua karakter surrogate pair menggabungkan diri dan membentuk karakter baru
 						}
 					}
 				}
