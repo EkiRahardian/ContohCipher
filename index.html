@@ -100,12 +100,11 @@
 						$("#caesar\\.display").html("Caesar key = " + key); //Menampilkan kunci cipher yang sedang digunakan
 					},
 					setDirection: function() { //Fungsi untuk menentukan apakah caesar cipher digeser ke depan atau belakang
-						const button = $("#caesar\\.direction");
-						if (button.val() === "+") {
-							button.val("-");
+						if (direction === 1) {
+							$("#caesar\\.direction").val("-");
 						}
 						else {
-							button.val("+");
+							$("#caesar\\.direction").val("+");
 						}
 						direction *= -1;
 						this.setKey();
@@ -134,12 +133,11 @@
 						$("#vigenere\\.display").html("Vigenere key = " + key); //Menunjukkan semua kunci vigenere yang sedang digunakan
 					},
 					setDirection: function() { //Fungsi untuk mengubah apakah vigenere cipher digeser ke depan atau belakang
-						const button = $("#vigenere\\.direction");
-						if (button.val() === "+") {
-							button.val("-");
+						if (direction === 1) {
+							$("#vigenere\\.direction").val("-");
 						}
 						else {
-							button.val("+");
+							$("#vigenere\\.direction").val("+");
 						}
 						direction *= -1;
 						this.setKey();
