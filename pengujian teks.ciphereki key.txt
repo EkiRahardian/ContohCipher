@@ -1,0 +1,5 @@
+caesar:13141
+vigenere:
+我很高興跟你見面、मेरा नाम Naufal Rizky Rahardian है, ผมมาจาก สุราบายา.
+
+untuk mendekripsi, gunakan kunci negatif (-)
