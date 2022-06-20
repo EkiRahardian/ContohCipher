@@ -23,13 +23,12 @@
 			for (let codepoint = 0; codepoint <= 1114111; codepoint++) {
 				if (codepoint === 1114111) {
 					huruf.value = String.fromCodePoint(codepoint);
-				}
-				else {
-					huruf.value = String.fromCodePoint(codepoint) + String.fromCodePoint(codepoint+1);
+				} else {
+					huruf.value = String.fromCodePoint(codepoint) + String.fromCodePoint(codepoint + 1);
 				}
 				const number = huruf.value.codePointAt(0);
 				if (codepoint !== number) {
-					different.push(String(codepoint) + " != " + String(number) + "<br>");
+					different.push("Poin kode " + String(codepoint) + " berubah menjadi poin kode " + String(number) + "<br>");
 				}
 			}
 			beda.innerHTML = different.join("");
