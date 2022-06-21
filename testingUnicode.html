@@ -24,11 +24,17 @@
 				if (codepoint === 1114111) {
 					huruf.value = String.fromCodePoint(codepoint);
 				} else {
-					huruf.value = String.fromCodePoint(codepoint) + String.fromCodePoint(codepoint + 1);
+					huruf.value = String.fromCodePoint(codepoint) +
+						String.fromCodePoint(codepoint + 1);
 				}
 				const number = huruf.value.codePointAt(0);
 				if (codepoint !== number) {
-					different.push("Poin kode " + String(codepoint) + " berubah menjadi poin kode " + String(number) + "<br>");
+					different.push(
+						"Poin kode " +
+						String(codepoint) +
+						" berubah menjadi poin kode " +
+						String(number) + "<br>"
+					);
 				}
 			}
 			beda.innerHTML = different.join("");
