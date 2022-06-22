@@ -234,9 +234,8 @@
 							const fileName = getFileName();
 							const arr = $("#teks\\.output").val().split(',');
 							const binary = atob(arr[1]);
-							let n = binary.length;
-							const u8arr = new Uint8Array(n);
-							while (n--) {
+							const u8arr = new Uint8Array(binary.length);
+							for (let n = 0; n < binary.length; n++) {
 								u8arr[n] = binary.codePointAt(n);
 							}
 							const file = new File([u8arr], "", {
@@ -249,10 +248,10 @@
 					},
 					fromCipheredText: function() {
 						const fileName = getFileName();
-						const characterArray = [...$("#teks\\.output").val()];
+						const characterArray = $("#teks\\.output").val();
 						const codepoints = [];
 						for (let i = 0; i < characterArray.length; i++) {
-							codepoints[i] = characterArray[i].codePointAt(0).toString(16);
+							codepoints[i] = characterArray.codePointAt(i).toString(16);
 						}
 						const file = new Blob([codepoints.join(" ")], {
 							type: "text/plain"
