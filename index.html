@@ -83,8 +83,7 @@
 						return key;
 					},
 					setKey: function() {
-						$("#caesar\\.input")
-							.val($("#caesar\\.input")
+						$("#caesar\\.input").val($("#caesar\\.input")
 							.val().replace(/[^0-9]/g, ''));
 						let input = $("#caesar\\.input").val();
 						if (input.length === 0) {
@@ -179,21 +178,21 @@
 								if (currentCodePoint === 1) {
 									currentCodePoint = 13;
 								}
-								characterArray[i] =
+								currentCodePoint =
 									currentCodePoint +
 									caesarKey +
 									vigenereKey[vigenereIndex];
-								while (characterArray[i] < 2) {
-									characterArray[i] += 1114110;
+								while (currentCodePoint < 2) {
+									currentCodePoint += 1114110;
 								}
-								while (characterArray[i] > 1114111) {
-									characterArray[i] -= 1114110;
+								while (currentCodePoint > 1114111) {
+									currentCodePoint -= 1114110;
 								}
-								if (characterArray[i] === 13) {
-									characterArray[i] = 1;
+								if (currentCodePoint === 13) {
+									currentCodePoint = 1;
 								}
 								characterArray[i] =
-									String.fromCodePoint(characterArray[i]);
+									String.fromCodePoint(currentCodePoint);
 								vigenereIndex += 1;
 								if (vigenereIndex === vigenereKey.length) {
 									vigenereIndex = 0;
@@ -248,10 +247,10 @@
 					},
 					fromCipheredText: function() {
 						const fileName = getFileName();
-						const characterArray = $("#teks\\.output").val();
+						const characters = [...$("#teks\\.output").val()];
 						const codepoints = [];
-						for (let i = 0; i < characterArray.length; i++) {
-							codepoints[i] = characterArray.codePointAt(i).toString(16);
+						for (let i = 0; i < characters.length; i++) {
+							codepoints[i] = characters[i].codePointAt(0).toString(16);
 						}
 						const file = new Blob([codepoints.join(" ")], {
 							type: "text/plain"
