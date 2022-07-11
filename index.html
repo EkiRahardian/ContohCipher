@@ -167,8 +167,7 @@
 						const caesarKey = caesar.getKey();
 						const vigenereKey = vigenere.getKey();
 						let vigenereIndex = 0;
-						const textInput = $("#teks\\.input").val();
-						const characterArray = [...textInput];
+						const characterArray = [...$("#teks\\.input").val()];
 						let currentCodePoint;
 						for (let i = 0; i < characterArray.length; i++) {
 							currentCodePoint = characterArray[i].codePointAt(0);
@@ -178,10 +177,7 @@
 								if (currentCodePoint === 1) {
 									currentCodePoint = 13;
 								}
-								currentCodePoint =
-									currentCodePoint +
-									caesarKey +
-									vigenereKey[vigenereIndex];
+								currentCodePoint = currentCodePoint + caesarKey + vigenereKey[vigenereIndex];
 								while (currentCodePoint < 2) {
 									currentCodePoint += 1114110;
 								}
@@ -191,19 +187,17 @@
 								if (currentCodePoint === 13) {
 									currentCodePoint = 1;
 								}
-								characterArray[i] =
-									String.fromCodePoint(currentCodePoint);
+								characterArray[i] = String.fromCodePoint(currentCodePoint);
 								vigenereIndex += 1;
 								if (vigenereIndex === vigenereKey.length) {
 									vigenereIndex = 0;
 								}
 							}
 						}
-						if (textInput.split("\x00").length > 1) {
+						if ($("#teks\\.input").val().split("\x00").length > 1) {
 							$("#teks\\.output").val(characterArray.join(""));
 						} else {
-							$("#teks\\.output")
-								.val(characterArray.join(String.fromCodePoint(0)));
+							$("#teks\\.output").val(characterArray.join(String.fromCodePoint(0)));
 						}
 					}
 				}
@@ -212,7 +206,7 @@
 			}();
 			const saveText = function() {
 				const getFileName = function() {
-					let fileName = $("#saveText\\.fileName").val();
+					let fileName = $("#saveText\\.fileName").val().trim();
 					if (fileName.length === 0) {
 						fileName = "fileName";
 					}
@@ -224,8 +218,7 @@
 					a.href = URL.createObjectURL(file);
 					a.download = fileName;
 					document.body.appendChild(a);
-					a.click();
-					a.remove();
+					a.click().remove();
 				};
 				const publicFunctions = {
 					fromDataURL: function() {
@@ -237,9 +230,7 @@
 							for (let n = 0; n < binary.length; n++) {
 								u8arr[n] = binary.codePointAt(n);
 							}
-							const file = new File([u8arr], "", {
-								type: arr[0].match(/:(.*?);/)[1]
-							});
+							const file = new File([u8arr], "", {type: arr[0].match(/:(.*?);/)[1]});
 							downloadFile(fileName, file);
 						} catch (err) {
 							alert("Error: Only accept valid data URL Base64 format!");
@@ -252,9 +243,7 @@
 						for (let i = 0; i < characters.length; i++) {
 							codepoints[i] = characters[i].codePointAt(0).toString(16);
 						}
-						const file = new Blob([codepoints.join(" ")], {
-							type: "text/plain"
-						});
+						const file = new Blob([codepoints.join(" ")], {type: "text/plain"});
 						downloadFile(fileName + ".ciphereki", file);
 					},
 				};
